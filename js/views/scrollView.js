@@ -2027,19 +2027,20 @@ ionic.views.Scroll = ionic.views.View.inherit({
    */
   __computeScrollMax: function(zoomLevel) {
 
-    var self = this;
+      var self = this;
 
-    if (zoomLevel == null) {
-      zoomLevel = self.__zoomLevel;
-    }
+      if (zoomLevel == null) {
+          zoomLevel = self.__zoomLevel;
+      }
 
-    self.__maxScrollLeft = Math.max((self.__contentWidth * zoomLevel) - self.__clientWidth, 0);
-    self.__maxScrollTop = Math.max((self.__contentHeight * zoomLevel) - self.__clientHeight, 0);
+      var yBoost = angular.isDefined(self.__container.attributes["max-scroll-y-boost"]) ? parseInt(self.__container.attributes["max-scroll-y-boost"].value) : 0;
+      self.__maxScrollLeft = Math.max((self.__contentWidth * zoomLevel) - self.__clientWidth, 0);
+      self.__maxScrollTop = Math.max((self.__contentHeight * zoomLevel) - self.__clientHeight + yBoost, 0);
 
-    if(!self.__didWaitForSize && !self.__maxScrollLeft && !self.__maxScrollTop) {
-      self.__didWaitForSize = true;
-      self.__waitForSize();
-    }
+      if(!self.__didWaitForSize && !self.__maxScrollLeft && !self.__maxScrollTop) {
+          self.__didWaitForSize = true;
+          self.__waitForSize();
+      }
   },
 
 
