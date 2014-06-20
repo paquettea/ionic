@@ -39,25 +39,27 @@
      * @param immediate {boolean} whether to call immediately or after the wait interval
      */
      debounce: function(func, wait, immediate) {
-      var timeout, args, context, timestamp, result;
+      var timeout, args, context, timestamp, result,start;
       return function() {
+
         context = this;
         args = arguments;
         timestamp = new Date();
-        var later = function() {
-          var last = (new Date()) - timestamp;
-          if (last < wait) {
-            timeout = setTimeout(later, wait - last);
-          } else {
-            timeout = null;
-            if (!immediate) result = func.apply(context, args);
-          }
+        var later = function(timestamp){
+            if (timestamp - start <= wait) {
+                result = func.apply(context, args);
+            }else{
+                ionic.requestAnimationFrame(later)
+            }
         };
-        var callNow = immediate && !timeout;
-        if (!timeout) {
-          timeout = setTimeout(later, wait);
+
+        if (!immediate) {
+            start = Date.now();
+            ionic.requestAnimationFrame(later)
+        }else {
+            result = func.apply(context, args);
         }
-        if (callNow) result = func.apply(context, args);
+
         return result;
       };
     },
@@ -65,34 +67,33 @@
     /**
      * Throttle the given fun, only allowing it to be
      * called at most every `wait` ms.
+     * optimization: use requestAnimationFrame instead of setTimeout - a lot faster on mobile device resulting in a more fluid render when throttleing scroll
      */
-    throttle: function(func, wait, options) {
-      var context, args, result;
-      var timeout = null;
-      var previous = 0;
-      options || (options = {});
-      var later = function() {
-        previous = options.leading === false ? 0 : Date.now();
-        timeout = null;
-        result = func.apply(context, args);
-      };
-      return function() {
-        var now = Date.now();
-        if (!previous && options.leading === false) previous = now;
-        var remaining = wait - (now - previous);
-        context = this;
-        args = arguments;
-        if (remaining <= 0) {
-          clearTimeout(timeout);
-          timeout = null;
-          previous = now;
-          result = func.apply(context, args);
-        } else if (!timeout && options.trailing !== false) {
-          timeout = setTimeout(later, remaining);
-        }
-        return result;
-      };
-    },
+      throttle: function(func, wait, options) {
+
+          var context, args, result;
+          var timeout = null;
+          var previous = 0;
+          options || (options = {});
+
+          return function() {
+              context = this;
+              args = arguments;
+              var later = function(timestamp){
+                  if (timestamp - start <= wait) {
+                      result = func.apply(context, args);
+                  }else{
+                      ionic.requestAnimationFrame(later)
+                  }
+              }
+              var start = Date.now();
+              ionic.requestAnimationFrame(later)
+
+
+
+              return result;
+          };
+      },
      // Borrowed from Backbone.js's extend
      // Helper function to correctly set up the prototype chain, for subclasses.
      // Similar to `goog.inherits`, but uses a hash of prototype properties and

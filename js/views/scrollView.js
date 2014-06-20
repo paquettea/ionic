@@ -1108,74 +1108,76 @@ ionic.views.Scroll = ionic.views.View.inherit({
   ---------------------------------------------------------------------------
   */
 
-  getRenderFn: function() {
-    var self = this;
+    getRenderFn: function() {
+        var self = this;
 
-    var content = this.__content;
+        var content = this.__content;
 
-    var docStyle = document.documentElement.style;
+        var docStyle = document.documentElement.style;
 
-    var engine;
-    if ('MozAppearance' in docStyle) {
-      engine = 'gecko';
-    } else if ('WebkitAppearance' in docStyle) {
-      engine = 'webkit';
-    } else if (typeof navigator.cpuClass === 'string') {
-      engine = 'trident';
-    }
-
-    var vendorPrefix = {
-      trident: 'ms',
-      gecko: 'Moz',
-      webkit: 'Webkit',
-      presto: 'O'
-    }[engine];
-
-    var helperElem = document.createElement("div");
-    var undef;
-
-    var perspectiveProperty = vendorPrefix + "Perspective";
-    var transformProperty = vendorPrefix + "Transform";
-    var transformOriginProperty = vendorPrefix + 'TransformOrigin';
-
-    self.__perspectiveProperty = transformProperty;
-    self.__transformProperty = transformProperty;
-    self.__transformOriginProperty = transformOriginProperty;
-
-    if (helperElem.style[perspectiveProperty] !== undef) {
-
-      return function(left, top, zoom, wasResize) {
-        content.style[transformProperty] = 'translate3d(' + (-left) + 'px,' + (-top) + 'px,0) scale(' + zoom + ')';
-        self.__repositionScrollbars();
-        if(!wasResize) {
-          self.triggerScrollEvent();
+        var engine;
+        if ('MozAppearance' in docStyle) {
+            engine = 'gecko';
+        } else if ('WebkitAppearance' in docStyle) {
+            engine = 'webkit';
+        } else if (typeof navigator.cpuClass === 'string') {
+            engine = 'trident';
         }
-      };
 
-    } else if (helperElem.style[transformProperty] !== undef) {
+        var vendorPrefix = {
+            trident: 'ms',
+            gecko: 'Moz',
+            webkit: 'Webkit',
+            presto: 'O'
+        }[engine];
 
-      return function(left, top, zoom, wasResize) {
-        content.style[transformProperty] = 'translate(' + (-left) + 'px,' + (-top) + 'px) scale(' + zoom + ')';
-        self.__repositionScrollbars();
-        if(!wasResize) {
-          self.triggerScrollEvent();
+        var helperElem = document.createElement("div");
+        var undef;
+
+        var perspectiveProperty = vendorPrefix + "Perspective";
+        var transformProperty = vendorPrefix + "Transform";
+        var transformOriginProperty = vendorPrefix + 'TransformOrigin';
+
+        self.__perspectiveProperty = transformProperty;
+        self.__transformProperty = transformProperty;
+        self.__transformOriginProperty = transformOriginProperty;
+
+        if (helperElem.style[perspectiveProperty] !== undef) {
+
+            return function(left, top, zoom, wasResize) {
+                //optimization: work with join instead of string sums (avoid memory clones)
+                content.style[transformProperty] = ['translate3d(',-left,  'px,', -top, 'px,0) scale(', zoom , ')'].join('');
+                self.__repositionScrollbars();
+                if(!wasResize) {
+                    self.triggerScrollEvent();
+                }
+            };
+
+        } else if (helperElem.style[transformProperty] !== undef) {
+
+            return function(left, top, zoom, wasResize) {
+                //optimization: work with join instead of string sums (avoid memory clones)
+                content.style[transformProperty] = ['translate(', -left, 'px,' ,-top,  'px) scale(' ,zoom , ')'].join('');
+                self.__repositionScrollbars();
+                if(!wasResize) {
+                    self.triggerScrollEvent();
+                }
+            };
+
+        } else {
+
+            return function(left, top, zoom, wasResize) {
+                content.style.marginLeft = left ? (-left/zoom) + 'px' : '';
+                content.style.marginTop = top ? (-top/zoom) + 'px' : '';
+                content.style.zoom = zoom || '';
+                self.__repositionScrollbars();
+                if(!wasResize) {
+                    self.triggerScrollEvent();
+                }
+            };
+
         }
-      };
-
-    } else {
-
-      return function(left, top, zoom, wasResize) {
-        content.style.marginLeft = left ? (-left/zoom) + 'px' : '';
-        content.style.marginTop = top ? (-top/zoom) + 'px' : '';
-        content.style.zoom = zoom || '';
-        self.__repositionScrollbars();
-        if(!wasResize) {
-          self.triggerScrollEvent();
-        }
-      };
-
-    }
-  },
+    },
 
 
   /**
