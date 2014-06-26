@@ -53,7 +53,8 @@ function($timeout, $controller, $ionicBind) {
           scrollbarY: '@',
           zooming: '@',
           minZoom: '@',
-          maxZoom: '@'
+          maxZoom: '@',
+          animationDuration : '@'
         });
         $scope.direction = $scope.direction || 'y';
 
@@ -80,7 +81,8 @@ function($timeout, $controller, $ionicBind) {
           scrollingY: $scope.direction.indexOf('y') >= 0,
           zooming: $scope.$eval($scope.zooming) === true,
           maxZoom: $scope.$eval($scope.maxZoom) || 3,
-          minZoom: $scope.$eval($scope.minZoom) || 0.5
+          minZoom: $scope.$eval($scope.minZoom) || 0.5,
+          animationDuration : $scope.$eval($scope.animationDuration) || 250
         };
         if (isPaging) {
           scrollViewOptions.speedMultiplier = 0.8;
