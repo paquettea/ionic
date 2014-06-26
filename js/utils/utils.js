@@ -39,12 +39,12 @@
      * @param immediate {boolean} whether to call immediately or after the wait interval
      */
      debounce: function(func, wait, immediate) {
-      var timeout, args, context, timestamp, result,start;
+      var  args, context,  result,start;
       return function() {
 
         context = this;
         args = arguments;
-        timestamp = new Date();
+
         var later = function(timestamp){
             if (timestamp - start <= wait) {
                 result = func.apply(context, args);
@@ -72,8 +72,6 @@
       throttle: function(func, wait, options) {
 
           var context, args, result;
-          var timeout = null;
-          var previous = 0;
           options || (options = {});
 
           return function() {
@@ -87,9 +85,7 @@
                   }
               }
               var start = Date.now();
-              ionic.requestAnimationFrame(later)
-
-
+              ionic.requestAnimationFrame(later);
 
               return result;
           };

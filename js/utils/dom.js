@@ -272,4 +272,9 @@
   ionic.requestAnimationFrame = ionic.DomUtil.requestAnimationFrame;
   ionic.cancelAnimationFrame = ionic.DomUtil.cancelAnimationFrame;
   ionic.animationFrameThrottle = ionic.DomUtil.animationFrameThrottle;
+
+
+    if (typeof window.performance === "undefined"){
+        window.performance = { now : Date.now}
+    }
 })(window, document, ionic);

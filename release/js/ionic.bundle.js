@@ -417,6 +417,11 @@ window.ionic = {
   ionic.requestAnimationFrame = ionic.DomUtil.requestAnimationFrame;
   ionic.cancelAnimationFrame = ionic.DomUtil.cancelAnimationFrame;
   ionic.animationFrameThrottle = ionic.DomUtil.animationFrameThrottle;
+
+
+    if (typeof window.performance === "undefined"){
+        window.performance = { now : Date.now}
+    }
 })(window, document, ionic);
 
 /**
@@ -3117,12 +3122,12 @@ ionic.DomUtil.ready(function(){
      * @param immediate {boolean} whether to call immediately or after the wait interval
      */
      debounce: function(func, wait, immediate) {
-      var timeout, args, context, timestamp, result,start;
+      var  args, context,  result,start;
       return function() {
 
         context = this;
         args = arguments;
-        timestamp = new Date();
+
         var later = function(timestamp){
             if (timestamp - start <= wait) {
                 result = func.apply(context, args);
@@ -3150,8 +3155,6 @@ ionic.DomUtil.ready(function(){
       throttle: function(func, wait, options) {
 
           var context, args, result;
-          var timeout = null;
-          var previous = 0;
           options || (options = {});
 
           return function() {
@@ -3165,9 +3168,7 @@ ionic.DomUtil.ready(function(){
                   }
               }
               var start = Date.now();
-              ionic.requestAnimationFrame(later)
-
-
+              ionic.requestAnimationFrame(later);
 
               return result;
           };
@@ -3766,9 +3767,7 @@ ionic.Platform.ready(function() {
  */
 var zyngaCore = { effect: {} };
 (function(global) {
-  var time = Date.now || function() {
-    return +new Date();
-  };
+
   var desiredFrames = 60;
   var millisecondsPerSecond = 1000;
   var running = {};
@@ -3892,7 +3891,7 @@ var zyngaCore = { effect: {} };
      */
     start: function(stepCallback, verifyCallback, completedCallback, duration, easingMethod, root) {
 
-      var start = time();
+      var start = window.performance.now();
       var lastFrame = start;
       var percent = 0;
       var dropCounter = 0;
@@ -3918,7 +3917,7 @@ var zyngaCore = { effect: {} };
         var render = virtual !== true;
 
         // Get current time
-        var now = time();
+        var now = window.performance.now();
 
         // Verification is executed before next animation step
         if (!running[id] || (verifyCallback && !verifyCallback(id))) {
@@ -5290,7 +5289,7 @@ ionic.views.Scroll = ionic.views.View.inherit({
       timeStamp = timeStamp.valueOf();
     }
     if (typeof timeStamp !== "number") {
-      timeStamp = Date.now();
+      timeStamp = window.performance.now();
     }
 
     var self = this;
@@ -5373,7 +5372,7 @@ ionic.views.Scroll = ionic.views.View.inherit({
       timeStamp = timeStamp.valueOf();
     }
     if (typeof timeStamp !== "number") {
-      timeStamp = Date.now();
+      timeStamp = window.performance.now();
     }
 
     var self = this;
@@ -5560,7 +5559,7 @@ ionic.views.Scroll = ionic.views.View.inherit({
       timeStamp = timeStamp.valueOf();
     }
     if (typeof timeStamp !== "number") {
-      timeStamp = Date.now();
+      timeStamp = window.performance.now();
     }
 
     var self = this;

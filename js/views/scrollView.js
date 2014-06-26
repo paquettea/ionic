@@ -26,9 +26,7 @@
  */
 var zyngaCore = { effect: {} };
 (function(global) {
-  var time = Date.now || function() {
-    return +new Date();
-  };
+
   var desiredFrames = 60;
   var millisecondsPerSecond = 1000;
   var running = {};
@@ -152,7 +150,7 @@ var zyngaCore = { effect: {} };
      */
     start: function(stepCallback, verifyCallback, completedCallback, duration, easingMethod, root) {
 
-      var start = time();
+      var start = window.performance.now();
       var lastFrame = start;
       var percent = 0;
       var dropCounter = 0;
@@ -178,7 +176,7 @@ var zyngaCore = { effect: {} };
         var render = virtual !== true;
 
         // Get current time
-        var now = time();
+        var now = window.performance.now();
 
         // Verification is executed before next animation step
         if (!running[id] || (verifyCallback && !verifyCallback(id))) {
@@ -1550,7 +1548,7 @@ ionic.views.Scroll = ionic.views.View.inherit({
       timeStamp = timeStamp.valueOf();
     }
     if (typeof timeStamp !== "number") {
-      timeStamp = Date.now();
+      timeStamp = window.performance.now();
     }
 
     var self = this;
@@ -1633,7 +1631,7 @@ ionic.views.Scroll = ionic.views.View.inherit({
       timeStamp = timeStamp.valueOf();
     }
     if (typeof timeStamp !== "number") {
-      timeStamp = Date.now();
+      timeStamp = window.performance.now();
     }
 
     var self = this;
@@ -1820,7 +1818,7 @@ ionic.views.Scroll = ionic.views.View.inherit({
       timeStamp = timeStamp.valueOf();
     }
     if (typeof timeStamp !== "number") {
-      timeStamp = Date.now();
+      timeStamp = window.performance.now();
     }
 
     var self = this;
