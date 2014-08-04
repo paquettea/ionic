@@ -4797,8 +4797,7 @@ ionic.views.Scroll = ionic.views.View.inherit({
       }
 
       //self.__indicatorY.indicator.style[self.__transformProperty] = 'translate3d(0,' + y + 'px, 0) scaleY(' + heightScale + ')';
-        self.__indicatorY.indicator.style[self.__transformProperty] = 'matrix(1,0,0,1,0,' + y + 'px)';
-
+        self.__indicatorY.indicator.style[self.__transformProperty] = 'matrix(0,0,1,0,0,' + y + 'px)';
     }
   },
 
@@ -4887,8 +4886,7 @@ ionic.views.Scroll = ionic.views.View.inherit({
 
             return function(left, top, zoom, wasResize) {
                 //optimization: work with join instead of string sums (avoid memory clones)
-
-                content.style[transformProperty] = ['matrix(0,0,',-left,  'px,0,0,', -top, 'px)'].join('');
+                content.style[transformProperty] = ['matrix(1,0,0,1,0,', -top, ')'].join('');
                 self.__repositionScrollbars();
                 if(!wasResize) {
                     self.triggerScrollEvent();
@@ -4899,7 +4897,8 @@ ionic.views.Scroll = ionic.views.View.inherit({
 
             return function(left, top, zoom, wasResize) {
                 //optimization: work with join instead of string sums (avoid memory clones)
-                content.style[transformProperty] = ['matrix(0,0,',-left,  'px,0,0,', -top, 'px)'].join('');
+                content.style[transformProperty] = ['matrix(1,0,0,1,0,', -top, ')'].join('');
+
                 self.__repositionScrollbars();
                 if(!wasResize) {
                     self.triggerScrollEvent();

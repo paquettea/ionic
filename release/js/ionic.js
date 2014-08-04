@@ -4879,8 +4879,7 @@ ionic.views.Scroll = ionic.views.View.inherit({
 
             return function(left, top, zoom, wasResize) {
                 //optimization: work with join instead of string sums (avoid memory clones)
-
-                content.style[transformProperty] = ['matrix(0,0,',-left,  'px,0,0,', -top, 'px)'].join('');
+                content.style[transformProperty] = ['matrix(1,0,0,1,0,', -top, ')'].join('');
                 self.__repositionScrollbars();
                 if(!wasResize) {
                     self.triggerScrollEvent();
@@ -4891,7 +4890,8 @@ ionic.views.Scroll = ionic.views.View.inherit({
 
             return function(left, top, zoom, wasResize) {
                 //optimization: work with join instead of string sums (avoid memory clones)
-                content.style[transformProperty] = ['matrix(0,0,',-left,  'px,0,0,', -top, 'px)'].join('');
+                content.style[transformProperty] = ['matrix(1,0,0,1,0,', -top, ')'].join('');
+
                 self.__repositionScrollbars();
                 if(!wasResize) {
                     self.triggerScrollEvent();
