@@ -6804,7 +6804,7 @@ function($timeout, $compile, $ionicSlideBoxDelegate) {
       };
 
       this.onPagerClick = function(index) {
-        void 0;
+        console.log('pagerClick', index);
         $scope.pagerClick({index: index});
       };
 

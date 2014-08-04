@@ -696,7 +696,7 @@ window.ionic = {
     // whatever lookup was done to find this element failed to find it
     // so we can't listen for events on it.
     if(element === null) {
-      void 0;
+      console.error('Null element passed to gesture (element does not exist). Not listening for gesture');
       return;
     }
 
@@ -2069,7 +2069,7 @@ window.ionic = {
      */
     device: function() {
       if(window.device) return window.device;
-      if(this.isWebView()) void 0;
+      if(this.isWebView()) console.error('device plugin required');
       return {};
     },
 
@@ -2692,7 +2692,7 @@ function tapClick(e) {
 
   var c = getPointerCoordinates(e);
 
-  void 0;
+  console.log('tapClick', e.type, ele.tagName, '('+c.x+','+c.y+')');
   triggerMouseEvent('click', ele, c.x, c.y);
 
   // if it's an input, focus in on the target, otherwise blur
@@ -2716,7 +2716,7 @@ function tapClickGateKeeper(e) {
   // do not allow through any click events that were not created by ionic.tap
   if( (ionic.scroll.isScrolling && ionic.tap.containsOrIsTextInput(e.target) ) ||
       (!e.isIonicTap && !ionic.tap.requiresNativeClick(e.target)) ) {
-    void 0;
+    console.log('clickPrevent', e.target.tagName);
     e.stopPropagation();
 
     if( !ionic.tap.isLabelWithTextInput(e.target) ) {
@@ -2732,7 +2732,7 @@ function tapMouseDown(e) {
   if(e.isIonicTap || tapIgnoreEvent(e)) return;
 
   if(tapEnabledTouchEvents) {
-    void 0;
+    console.log('mousedown', 'stop event');
     e.stopPropagation();
 
     if( (!ionic.tap.isTextInput(e.target) || tapLastTouchTarget !== e.target) && !(/^(select|option)$/i).test(e.target.tagName) ) {
@@ -2893,7 +2893,7 @@ function tapHandleFocus(ele) {
 function tapFocusOutActive() {
   var ele = tapActiveElement();
   if(ele && (/^(input|textarea|select)$/i).test(ele.tagName) ) {
-    void 0;
+    console.log('tapFocusOutActive', ele.tagName);
     ele.blur();
   }
   tapActiveElement(null);
@@ -2913,7 +2913,7 @@ function tapFocusIn(e) {
     // 2) There is an active element which is a text input
     // 3) A text input was just set to be focused on by a touch event
     // 4) A new focus has been set, however the target isn't the one the touch event wanted
-    void 0;
+    console.log('focusin', 'tapTouchFocusedInput');
     tapTouchFocusedInput.focus();
     tapTouchFocusedInput = null;
   }
@@ -3424,7 +3424,7 @@ function keyboardShow(element, elementTop, elementBottom, viewportHeight, keyboa
 
   details.contentHeight = viewportHeight - keyboardHeight;
 
-  void 0;
+  console.log('keyboardShow', keyboardHeight, details.contentHeight);
 
   // figure out if the element is under the keyboard
   details.isElementUnderKeyboard = (details.elementBottom > details.contentHeight);
@@ -3454,7 +3454,7 @@ function keyboardFocusOut(e) {
 }
 
 function keyboardHide() {
-  void 0;
+  console.log('keyboardHide');
   ionic.keyboard.isOpen = false;
 
   ionic.trigger('resetScrollView', {
@@ -4796,7 +4796,9 @@ ionic.views.Scroll = ionic.views.View.inherit({
 
       }
 
-      self.__indicatorY.indicator.style[self.__transformProperty] = 'translate3d(0,' + y + 'px, 0) scaleY(' + heightScale + ')';
+      //self.__indicatorY.indicator.style[self.__transformProperty] = 'translate3d(0,' + y + 'px, 0) scaleY(' + heightScale + ')';
+        self.__indicatorY.indicator.style[self.__transformProperty] = 'matrix(1,0,0,1,0,' + y + 'px)';
+
     }
   },
 
@@ -4885,7 +4887,8 @@ ionic.views.Scroll = ionic.views.View.inherit({
 
             return function(left, top, zoom, wasResize) {
                 //optimization: work with join instead of string sums (avoid memory clones)
-                content.style[transformProperty] = ['translate3d(',-left,  'px,', -top, 'px,0) scale(', zoom , ')'].join('');
+
+                content.style[transformProperty] = ['matrix(0,0,',-left,  'px,0,0,', -top, 'px)'].join('');
                 self.__repositionScrollbars();
                 if(!wasResize) {
                     self.triggerScrollEvent();
@@ -4896,7 +4899,7 @@ ionic.views.Scroll = ionic.views.View.inherit({
 
             return function(left, top, zoom, wasResize) {
                 //optimization: work with join instead of string sums (avoid memory clones)
-                content.style[transformProperty] = ['translate(', -left, 'px,' ,-top,  'px) scale(' ,zoom , ')'].join('');
+                content.style[transformProperty] = ['matrix(0,0,',-left,  'px,0,0,', -top, 'px)'].join('');
                 self.__repositionScrollbars();
                 if(!wasResize) {
                     self.triggerScrollEvent();
@@ -8692,7 +8695,7 @@ var Easing = (function(){
     ionic.extend(this, opts);
 
     if(opts.useSlowAnimations) {
-      void 0;
+      console.warn('Running animation', opts.name, 'with SLOW animations (duration and delay increased by 3x)');
       this.delay *= 3;
       this.duration *= 3;
     }
@@ -8797,7 +8800,7 @@ var Easing = (function(){
       }, function(droppedFrames, finishedAnimation) {
         ionic.Animation.animationStopped(self);
         self.onComplete && self.onComplete(finishedAnimation, droppedFrames);
-        void 0;
+        console.log('Finished anim:', droppedFrames, finishedAnimation);
       }, animState);
     },
 
@@ -8891,10 +8894,10 @@ var Easing = (function(){
 
           var droppedFrames = Math.round((now - lastFrame) / (millisecondsPerSecond / desiredFrames)) - 1;
           if(self._unpausedAnimation) {
-            void 0;
+            console.log('After pausing', droppedFrames, 'Dropped frames');
           }
           for (var j = 0; j < Math.min(droppedFrames, 4); j++) {
-            void 0;
+            console.log('drop step');
             step(true);
             dropCounter++;
           }
@@ -42962,7 +42965,7 @@ function($timeout, $compile, $ionicSlideBoxDelegate) {
       };
 
       this.onPagerClick = function(index) {
-        void 0;
+        console.log('pagerClick', index);
         $scope.pagerClick({index: index});
       };
 
