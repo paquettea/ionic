@@ -76,6 +76,40 @@ module.exports = {
     'js/angular/controller/**/*.js',
     'js/angular/directive/**/*.js',
   ],
+  ionicScrollFiles : [
+      // Base
+      'js/ionic.js',
+
+      // Utils
+      'js/utils/animate.js',
+      'js/utils/dom.js',
+      'js/utils/events.js',
+      'js/utils/gestures.js',
+      'js/utils/platform.js',
+      'js/utils/poly.js',
+      'js/utils/tap.js',
+      'js/utils/activator.js',
+      'js/utils/utils.js',
+      'js/utils/keyboard.js',
+      'js/utils/viewport.js',
+
+      'js/views/view.js',
+      'js/views/scrollView.js'
+
+  ],
+  angularIonicScrollFiles: [
+      'js/angular/*.js',
+      'js/angular/controller/scrollController.js',
+      'js/angular/service/gesture.js',
+      'js/angular/service/platform.js',
+      'js/angular/service/viewService.js',
+      'js/angular/service/delegateService.js',
+      'js/angular/service/scrollDelegate.js',
+      'js/angular/service/bind.js',
+      'js/angular/directive/content.js',
+      'js/angular/directive/scroll.js',
+      'js/angular/directive/navView.js'
+  ],
 
   //Which vendor files to include in dist, used by build
   //Matched relative to config/lib/

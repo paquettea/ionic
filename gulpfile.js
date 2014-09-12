@@ -57,6 +57,8 @@ if (argv.dist) {
 
 gulp.task('default', ['build']);
 gulp.task('build', ['bundle', 'sass']);
+gulp.task('build-scroll-view-only', ['bundleScrollView', 'sassScrollView']);
+
 gulp.task('validate', ['jshint', 'ddescribe-iit', 'karma']);
 
 
@@ -92,11 +94,36 @@ gulp.task('changelog', function(done) {
   });
 });
 
+gulp.task('bundleScrollView', [
+    'scriptsScrollView',
+    'scripts-ngScrollView',
+    'vendor',
+    'version'
+], function() {
+    gulp.src(buildConfig.ionicBundleFiles.map(function(src) {
+        return src.replace(/.js$/, '.min.js');
+    }), {
+        base: buildConfig.dist,
+        cwd: buildConfig.dist
+    })
+        .pipe(header(buildConfig.bundleBanner))
+        .pipe(concat('ionic.bundle.min.js'))
+        .pipe(gulp.dest(buildConfig.dist + '/js'));
+
+    return gulp.src(buildConfig.ionicBundleFiles, {
+        base: buildConfig.dist,
+        cwd: buildConfig.dist
+    })
+        .pipe(header(buildConfig.bundleBanner))
+        .pipe(concat('ionic.bundle.js'))
+        .pipe(gulp.dest(buildConfig.dist + '/js'));
+});
+
 gulp.task('bundle', [
   'scripts',
   'scripts-ng',
   'vendor',
-  'version',
+  'version'
 ], function() {
   gulp.src(buildConfig.ionicBundleFiles.map(function(src) {
       return src.replace(/.js$/, '.min.js');
@@ -142,6 +169,56 @@ gulp.task('vendor', function() {
       base: 'config/lib/'
     })
     .pipe(gulp.dest(buildConfig.dist));
+});
+
+gulp.task('scriptsScrollView', function() {
+    return gulp.src(buildConfig.ionicScrollFiles)
+        .pipe(stripDebug())
+        .pipe(template({ pkg: pkg }))
+        .pipe(concat('ionic-scroll-view.js'))
+        .pipe(header(buildConfig.closureStart))
+        .pipe(footer(buildConfig.closureEnd))
+        .pipe(header(banner))
+        .pipe(gulp.dest(buildConfig.dist + '/js'))
+        .pipe( uglify())
+        .pipe(rename({ extname: '.min.js' }))
+        .pipe(header(banner))
+        .pipe(gulp.dest(buildConfig.dist + '/js'));
+});
+
+gulp.task('scripts-ngScrollView', function() {
+    return gulp.src(buildConfig.angularIonicScrollFiles)
+        .pipe( stripDebug())
+        .pipe(concat('ionic-scroll-view-angular.js'))
+        .pipe(header(buildConfig.closureStart))
+        .pipe(footer(buildConfig.closureEnd))
+        .pipe(header(banner))
+        .pipe(gulp.dest(buildConfig.dist + '/js'))
+        .pipe(uglify())
+        .pipe(rename({ extname: '.min.js' }))
+        .pipe(header(banner))
+        .pipe(gulp.dest(buildConfig.dist + '/js'));
+});
+
+gulp.task('sassScrollView', function(done) {
+    gulp.src('scss/ionic-scroll-view.scss')
+        .pipe(header(banner))
+        .pipe(sass({
+            onError: function(err) {
+                //If we're watching, don't exit on error
+                if (IS_WATCH) {
+                    console.log(gutil.colors.red(err));
+                } else {
+                    done(err);
+                }
+            }
+        }))
+        .pipe(concat('ionic-scroll-view.css'))
+        .pipe(gulp.dest(buildConfig.dist + '/css'))
+        .pipe(gulpif(IS_RELEASE_BUILD, minifyCss()))
+        .pipe(rename({ extname: '.min.css' }))
+        .pipe(gulp.dest(buildConfig.dist + '/css'))
+        .on('end', done);
 });
 
 gulp.task('scripts', function() {
