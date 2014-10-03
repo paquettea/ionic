@@ -6425,7 +6425,8 @@ function($timeout, $controller, $ionicBind) {
           zooming: $scope.$eval($scope.zooming) === true,
           maxZoom: $scope.$eval($scope.maxZoom) || 3,
           minZoom: $scope.$eval($scope.minZoom) || 0.5,
-          animationDuration : $scope.$eval($scope.animationDuration) || 250
+          animationDuration : $scope.$eval($scope.animationDuration) || 250,
+          wheelDampen : $scope.$eval($attr.wheelDampen) || 6
         };
         if (isPaging) {
           scrollViewOptions.speedMultiplier = 0.8;
